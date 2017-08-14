@@ -9,11 +9,21 @@ import (
 type Page struct {
 	Title       string
 	Description string
+	OgTitle		string
 }
 
 func isDescription(attrs []html.Attribute) bool {
 	for _, attr := range attrs {
 		if attr.Key == "name" && attr.Val == "description" {
+			return true
+		}
+	}
+	return false
+}
+
+func isOgTitle(attrs []html.Attribute) bool {
+	for _, attr := range attrs {
+		if attr.Key == "property" && attr.Val == "og:title" {
 			return true
 		}
 	}
@@ -29,6 +39,13 @@ func f(n *html.Node, page *Page) {
 			// キーがcontentであるアトリビュートの値を格納
 			if attr.Key == "content" {
 				page.Description = attr.Val
+			}
+		}
+	}
+	if isOgTitle(n.Attr) {
+		for _, attr := range n.Attr {
+			if attr.Key == "content" {
+				page.OgTitle = attr.Val
 			}
 		}
 	}
